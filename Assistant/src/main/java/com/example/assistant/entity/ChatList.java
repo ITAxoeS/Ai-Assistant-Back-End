@@ -9,12 +9,12 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Data
-@Table(name = "chat_storage")
+@Table(name = "chat_list")
 //@Table(name = "chat_storage",uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","id"}))//不是歌曲收藏，不需要唯一约束
 @DynamicUpdate
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatStorage {
+public class ChatList {
     @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
@@ -24,11 +24,7 @@ public class ChatStorage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private  String createTime;//时间戳
-
-    private String chatTitle;
-
     @Lob
     @Column(columnDefinition = "LONGTEXT")//保险起见，用大字符串
-    private  String message;//对话历史消息字符串
+    private  String chatList;//对话历史列表
 }
