@@ -25,7 +25,7 @@ public class User {
 
     @Lob
     @Column(length = 7_500_000)
-    private String userHeadImg;//用户头像
+    private String userAvatar;//用户头像
 
     @Column(length = 7)
     private String userName;//用户昵称
