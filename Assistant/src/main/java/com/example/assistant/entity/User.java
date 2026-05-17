@@ -23,6 +23,8 @@ public class User {
     @Column(length = 16)
     private String userPassword;//用户密码
 
+    private String userRegisterTime;//注册时间
+
     @Lob
     @Column(length = 7_500_000)
     private String userAvatar;//用户头像

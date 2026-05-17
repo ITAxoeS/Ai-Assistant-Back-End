@@ -8,7 +8,7 @@ public class RequestUserDto {
     private  String userId;
     private String userAccount;
     private String userName;
-    private String passWord;
+    private String userPassWord;
     private String userArea;
     private String userBirth;
     private String userSex;
