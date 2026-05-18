@@ -20,7 +20,7 @@ public class User {
     @Column(unique = true, length = 20)
     private String userAccount;//用户账号
 
-    @Column(length = 16)
+    @Column()
     private String userPassword;//用户密码
 
     private String userRegisterTime;//注册时间
@@ -32,7 +32,7 @@ public class User {
     @Column(length = 7)
     private String userName;//用户昵称
 
-    @Column(length = 1)
+    @Column(length = 2)
     private String userSex;// 用户性别
 
     @Column(length = 6)
@@ -40,4 +40,19 @@ public class User {
 
     @Column(length = 7)
     private String userArea;//用户地区
+
+    @Column(length = 20)
+    private String userTheme;//用户主题
+
+    public  User(String userAccount,String userPassword,String userRegisterTime){
+        this.userAccount = userAccount;
+        this.userPassword = userPassword;
+        this.userRegisterTime = userRegisterTime;
+        this.userAvatar="";
+        this.userName="用户名";
+        this.userSex="性别";
+        this.userBirth="生日";
+        this.userArea="地区";
+        this.userTheme="主题";
+    }
 }

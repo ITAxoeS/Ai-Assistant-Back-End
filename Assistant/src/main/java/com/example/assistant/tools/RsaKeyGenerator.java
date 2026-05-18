@@ -13,7 +13,7 @@ import java.util.Base64;
 @Component
 public class RsaKeyGenerator {
 
-    @PostConstruct
+//    @PostConstruct
     // 生成密钥对(公钥和私钥)
     public KeyPair generateKeyPair() throws Exception {
         //  创建密钥对生成器
