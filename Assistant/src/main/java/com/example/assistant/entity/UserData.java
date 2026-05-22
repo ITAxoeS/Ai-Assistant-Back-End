@@ -31,4 +31,16 @@ public class UserData {
     private String monthRecord;
 
     private  String toDoList;
+
+    public  UserData(User user,String dayRecord,String weekRecord,String monthRecord){
+        this.user = user;
+        this.dayRecord = dayRecord;
+        this.weekRecord = weekRecord;
+        this.monthRecord = monthRecord;
+        this.toDoList = "";
+    }
+    public  UserData (User user,String toDoList){
+        this.user = user;
+        this.toDoList = toDoList;
+    }
 }

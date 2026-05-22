@@ -1,8 +1,13 @@
 package com.example.assistant.service;
 
+import com.example.assistant.dao.ChatListRepository;
+import com.example.assistant.dao.UserDataRepository;
 import com.example.assistant.dao.UserRepository;
 import com.example.assistant.dto.RequestUserDto;
+import com.example.assistant.entity.ChatList;
 import com.example.assistant.entity.User;
+import com.example.assistant.entity.UserData;
+import com.example.assistant.tools.JwtTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,15 +30,18 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final UserDataRepository userDataRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ChatListRepository chatListRepository;
 
 
     // 通过构造函数注入
     @Autowired // Spring 4.3 以后，如果类只有一个构造函数，这个注解甚至可以省略
-    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
+    public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository, UserDataRepository userDataRepository, ChatListRepository chatListRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userDataRepository = userDataRepository;
+        this.chatListRepository = chatListRepository;
     }
 
     public String getPublicKeyContent() throws Exception {
@@ -78,8 +86,30 @@ public class UserService {
                 map.put("birth", user.getUserBirth());
                 map.put("area", user.getUserArea());
                 map.put("theme", user.getUserTheme());
-                map.put("register",user.getUserRegisterTime());
-                System.out.println(map);
+                map.put("register", user.getUserRegisterTime());
+                Optional<UserData> userDataOptional = userDataRepository.findByUserId(user.getId());
+                Optional<ChatList> chatListOptional = chatListRepository.findByUserId(user.getId());
+                if (userDataOptional.isPresent()) {
+                    UserData userData = userDataOptional.get();
+                    map.put("dayRecord", userData.getDayRecord());
+                    map.put("weekRecord", userData.getWeekRecord());
+                    map.put("monthRecord", userData.getMonthRecord());
+                    map.put("toDoList", userData.getToDoList());
+                } else {
+                    map.put("dayRecord", "");
+                    map.put("weekRecord", "");
+                    map.put("monthRecord", "");
+                    map.put("toDoList", "");
+                }
+                if (chatListOptional.isPresent()) {
+                    ChatList chatList = chatListOptional.get();
+                    map.put("chatList", chatList.getChatList());
+                } else {
+                    map.put("chatList", "");
+                }
+                String token = new JwtTool().generateToken(user.getUserAccount(), user.getId());
+                map.put("token", token);
+//                System.out.println(map);
                 return map;
             }
         }
@@ -87,13 +117,14 @@ public class UserService {
         map.put("code", "401");
         return map;
     }
-    public Map<String,Object> updateUser(RequestUserDto requestUserDto) {
-        String account = requestUserDto.getUserAccount();
+
+    public Map<String, Object> updateUser(RequestUserDto requestUserDto, String account) {
+//        String account = requestUserDto.getUserAccount();
         String avatar = requestUserDto.getUserAvatar();
         String name = requestUserDto.getUserName();
         String sex = requestUserDto.getUserSex();
-        String birth =requestUserDto.getUserBirth();
-        String area =requestUserDto.getUserArea();
+        String birth = requestUserDto.getUserBirth();
+        String area = requestUserDto.getUserArea();
         Optional<User> userOptional = userRepository.findByUserAccount(account);//通过账号查询
         if (userOptional.isPresent()) {
             User user = userOptional.get();//获取代表当前账户的对象
@@ -102,19 +133,63 @@ public class UserService {
             user.setUserSex(sex);
             user.setUserBirth(birth);
             user.setUserArea(area);
-           User resultUser =  userRepository.save(user);
+            User resultUser = userRepository.save(user);
             Map<String, Object> map = new HashMap<>();
-            map.put("code","200");
+            map.put("code", "200");
             map.put("avatar", resultUser.getUserAvatar());
             map.put("name", resultUser.getUserName());
             map.put("sex", resultUser.getUserSex());
-            map.put("birth",resultUser.getUserBirth());
+            map.put("birth", resultUser.getUserBirth());
             map.put("area", resultUser.getUserArea());
+            map.put("register",resultUser.getUserRegisterTime());
 //        System.out.println(ResponseData.success("登录成功", null, map));
             return map;
         } else {
             Map<String, Object> map = new HashMap<>();
-            map.put("code","404");
+            map.put("code", "404");
+            return map;
+        }
+    }
+
+    public Map<String, Object> checkUser(String account) throws Exception {
+        Optional<User> userOptional = userRepository.findByUserAccount(account);
+        if (userOptional.isPresent()) {//如果盒子内存在内容
+            User user = userOptional.get();//获取，代表当前账户的对象
+            //封装数据
+            Map<String, Object> map = new HashMap<>();
+            map.put("code", "200");
+            map.put("account", user.getUserAccount());
+            map.put("avatar", user.getUserAvatar());
+            map.put("name", user.getUserName());
+            map.put("sex", user.getUserSex());
+            map.put("birth", user.getUserBirth());
+            map.put("area", user.getUserArea());
+            map.put("theme", user.getUserTheme());
+            map.put("register", user.getUserRegisterTime());
+            Optional<UserData> userDataOptional = userDataRepository.findByUserId(user.getId());
+            Optional<ChatList> chatListOptional = chatListRepository.findByUserId(user.getId());
+            if (userDataOptional.isPresent()) {
+                UserData userData = userDataOptional.get();
+                map.put("dayRecord", userData.getDayRecord());
+                map.put("weekRecord", userData.getWeekRecord());
+                map.put("monthRecord", userData.getMonthRecord());
+                map.put("toDoList", userData.getToDoList());
+            } else {
+                map.put("dayRecord", "");
+                map.put("weekRecord", "");
+                map.put("monthRecord", "");
+                map.put("toDoList", "");
+            }
+            if (chatListOptional.isPresent()) {
+                ChatList chatList = chatListOptional.get();
+                map.put("chatList", chatList.getChatList());
+            } else {
+                map.put("chatList", "");
+            }
+            return map;
+        } else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("code", "401");
             return map;
         }
     }
@@ -166,5 +241,4 @@ public class UserService {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         return kf.generatePrivate(spec);
     }
-
 }

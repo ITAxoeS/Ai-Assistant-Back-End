@@ -13,4 +13,5 @@ public class RequestUserDto {
     private String userBirth;
     private String userSex;
     private String userAvatar;
+    private String  userTheme;
 }
