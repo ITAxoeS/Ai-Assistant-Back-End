@@ -58,6 +58,20 @@ public class DataController {
             return  ResponseEntity.status(500).body(ResponseDto.error("系统错误"));
         }
     }
+
+    @PostMapping("/delete-chat")
+    public  ResponseEntity  deleteChat(@RequestParam("chatId") String chatId){
+        try{
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.isAuthenticated()) {
+                String account = auth.getName(); // 当前账户
+                 dataService.deleteChat(account,chatId);
+            }
+                return ResponseEntity.ok().body(ResponseDto.success("删除成功",""));
+        }catch (Exception e){
+            return  ResponseEntity.status(500).body(ResponseDto.error("系统错误"));
+        }
+    }
     //更新ChatList
     // 修改标题等操作
     @PostMapping("/update-chatlist")
@@ -66,8 +80,8 @@ public class DataController {
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated()) {
                 String account = auth.getName(); // 当前账户
-                boolean result = dataService.updateChatList(requestDataDto,account);
-                if (result) {
+                Map<String,Object> result = dataService.updateChatList(requestDataDto,account);
+                if (!result.isEmpty()) {
                     return ResponseEntity.ok().body(ResponseDto.success("保存成功", "对话列表成功更新保存"));
                 } else {
                     return ResponseEntity.status(404).body(ResponseDto.error("用户不存在"));

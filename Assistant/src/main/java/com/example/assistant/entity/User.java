@@ -41,18 +41,15 @@ public class User {
     @Column(length = 7)
     private String userArea;//用户地区
 
-    @Column(length = 20)
-    private String userTheme;//用户主题
 
     public  User(String userAccount,String userPassword,String userRegisterTime){
         this.userAccount = userAccount;
         this.userPassword = userPassword;
         this.userRegisterTime = userRegisterTime;
         this.userAvatar="";
-        this.userName="用户名";
-        this.userSex="性别";
-        this.userBirth="生日";
-        this.userArea="地区";
-        this.userTheme="主题";
+        this.userName="";
+        this.userSex="";
+        this.userBirth="";
+        this.userArea="";
     }
 }

@@ -101,12 +101,15 @@ public class UserController {
         }
     }
 
-    public ResponseEntity deleteUser(@RequestBody RequestUserDto requestUserDto) {
-        return ResponseEntity.ok().build();
-    }
-
-
-    public ResponseEntity changePassword(@RequestBody RequestUserDto requestUserDto) {
-        return ResponseEntity.ok().build();
+    @PostMapping("/logout")
+    public ResponseEntity  logout(){
+        ResponseCookie cookie = ResponseCookie.from("auth_token", "")
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(0)
+                .sameSite("Strict")
+                .build();
+        return ResponseEntity.ok().header("Set-Cookie",cookie.toString()).body(ResponseDto.success("退出成功",""));
     }
 }

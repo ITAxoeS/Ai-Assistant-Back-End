@@ -44,28 +44,21 @@ public class DataService {
         Optional<User> userOptional = userRepository.findByUserAccount(account);
         if (userOptional.isPresent()) {
             Map<String, Object> map = new HashMap<>();
-            Optional<ChatList> chatListOptional = chatListRepository.findByUserId(userOptional.get().getId());
-            Optional<ChatStorage> chatStorageOptional = chatStorageRepository.findByUserId(userOptional.get().getId());
-            if(chatListOptional.isPresent()&& chatStorageOptional.isPresent()) {//存在更新
-                //更新对话列表
-                ChatList cl = chatListOptional.get();
-                cl.setChatList(chatList);
-                ChatList updatedCl = chatListRepository.save(cl);
+            Optional<ChatStorage> chatStorageOptional = chatStorageRepository.findByUserIdAndCreateTime(userOptional.get().getId(),createTime);
+            if(chatStorageOptional.isPresent()) {//存在更新
                 //更新对话存储
                 ChatStorage cs = chatStorageOptional.get();
                 cs.setMessage(messages);
                 chatStorageRepository.save(cs);
                 map.put("code", "200");
-                map.put("chatList", updatedCl.getChatList());
             }else{//不存在，新建
                 User user = userOptional.get();
                 ChatStorage cs = new ChatStorage(user, null, createTime, chatTitle, messages);
-                ChatList cl = new ChatList(user, null, chatList);
                 chatStorageRepository.save(cs);//保存到数据库
-                ChatList newCl = chatListRepository.save(cl);
                 map.put("code", "200");
-                map.put("chatList", newCl.getChatList());
             }
+            Map m = updateChatList(requestDataDto,account);
+            map.put("chatList", m.get("chatList"));
             return map;
         } else {
             Map<String, Object> map = new HashMap<>();
@@ -88,29 +81,37 @@ public class DataService {
             }else{
                 map.put("code","404");
             }
-            return  map;
         }else{
             map.put("code","404");
-            return  map;
         }
+        return  map;
     }
 
-    public  Boolean updateChatList(RequestDataDto requestDataDto,String account){
+    public  void  deleteChat( String account,String chatId) throws  Exception {
+        Optional<User> userOptional = userRepository.findByUserAccount(account);//获取当前用户
+        userOptional.ifPresent(user -> chatStorageRepository.deleteByUserIdAndCreateTime(user.getId(), chatId));
+    }
+
+    public Map<String,Object> updateChatList(RequestDataDto requestDataDto,String account){
         String chatList = requestDataDto.getChatList();
         Optional<User> userOptional = userRepository.findByUserAccount(account);//获取当前用户
+        Map<String,Object> map = new HashMap<>();
         if (userOptional.isPresent()) {
             Optional<ChatList> chatListOptional = chatListRepository.findByUserId(userOptional.get().getId());
             if ( chatListOptional.isPresent()) {//存在，更新
                 ChatList cl =  chatListOptional.get();//拿到旧对象；
                 cl.setChatList(chatList);
-                chatListRepository.save(cl);
+                ChatList result =   chatListRepository.save(cl);
+                map.put("chatList",result.getChatList());
+                return  map;
             }else{//不存在，新建
                 ChatList cl = new ChatList(userOptional.get(), null,chatList);//保存到当前用户为外键的数据表
-                chatListRepository.save(cl);
+               ChatList result =  chatListRepository.save(cl);
+                map.put("chatList",result.getChatList());
+                return  map;
             }
-            return  true;
         }else{
-            return  false;
+            return  map;
         }
     }
 

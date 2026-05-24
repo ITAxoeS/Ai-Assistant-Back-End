@@ -55,7 +55,7 @@ public class UserService {
         );
     }
 
-    public User registerUser(RequestUserDto requestUserDto) throws Exception {
+    public void registerUser(RequestUserDto requestUserDto) throws Exception {
         String account = requestUserDto.getUserAccount();
         String password = requestUserDto.getUserPassWord();
         String registerTime = String.valueOf(Instant.now().toEpochMilli());
@@ -63,7 +63,7 @@ public class UserService {
         String passWord = decrypt(password);//解密(已验证成功)
         String encodedPassword = passwordEncoder.encode(passWord);
         User user = new User(account, encodedPassword, registerTime);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     public Map<String, Object> loginUser(RequestUserDto requestUserDto) throws Exception {
@@ -73,11 +73,11 @@ public class UserService {
         String passWord = decrypt(password);//RSA解密(已验证成功)
         //对比
         Optional<User> userOptional = userRepository.findByUserAccount(account);
+        Map<String, Object> map = new HashMap<>();
         if (userOptional.isPresent()) {//如果盒子内存在内容
             User user = userOptional.get();//获取，代表当前账户的对象
             if (passwordEncoder.matches(passWord, user.getUserPassword())) {//如果密码相同
                 //封装数据
-                Map<String, Object> map = new HashMap<>();
                 map.put("code", "200");
                 map.put("account", user.getUserAccount());
                 map.put("avatar", user.getUserAvatar());
@@ -85,7 +85,6 @@ public class UserService {
                 map.put("sex", user.getUserSex());
                 map.put("birth", user.getUserBirth());
                 map.put("area", user.getUserArea());
-                map.put("theme", user.getUserTheme());
                 map.put("register", user.getUserRegisterTime());
                 Optional<UserData> userDataOptional = userDataRepository.findByUserId(user.getId());
                 Optional<ChatList> chatListOptional = chatListRepository.findByUserId(user.getId());
@@ -113,7 +112,6 @@ public class UserService {
                 return map;
             }
         }
-        Map<String, Object> map = new HashMap<>();
         map.put("code", "401");
         return map;
     }
@@ -164,7 +162,6 @@ public class UserService {
             map.put("sex", user.getUserSex());
             map.put("birth", user.getUserBirth());
             map.put("area", user.getUserArea());
-            map.put("theme", user.getUserTheme());
             map.put("register", user.getUserRegisterTime());
             Optional<UserData> userDataOptional = userDataRepository.findByUserId(user.getId());
             Optional<ChatList> chatListOptional = chatListRepository.findByUserId(user.getId());
@@ -183,6 +180,7 @@ public class UserService {
             if (chatListOptional.isPresent()) {
                 ChatList chatList = chatListOptional.get();
                 map.put("chatList", chatList.getChatList());
+//                System.out.println(chatList.getChatList());
             } else {
                 map.put("chatList", "");
             }

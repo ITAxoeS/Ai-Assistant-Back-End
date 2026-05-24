@@ -9,7 +9,10 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 @Data
-@Table(name = "chat_list")
+@Table(name = "chat_list", uniqueConstraints = @UniqueConstraint(
+        name = "uk_chat_list_user_id",
+        columnNames = "user_id"  //避免总是返回多条
+))
 //@Table(name = "chat_storage",uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","id"}))//不是歌曲收藏，不需要唯一约束
 @DynamicUpdate
 @NoArgsConstructor
