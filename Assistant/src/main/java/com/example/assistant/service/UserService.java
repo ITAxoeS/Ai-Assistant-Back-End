@@ -195,20 +195,20 @@ public class UserService {
     public String decrypt(String encryptedData) throws Exception {
         //加载私钥
         PrivateKey privateKey = loadPrivateKey();
-        System.out.println("解密密码");
+//        System.out.println("解密密码");
         //  创建解密器
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        System.out.println("解密密码0.5");
+//        System.out.println("解密密码0.5");
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
-        System.out.println("解密密码1");
+//        System.out.println("解密密码1");
         // Base64解码前端传来的加密数据
         byte[] encryptedBytes = Base64.getDecoder().decode(encryptedData);
-        System.out.println("解密密码2");
+//        System.out.println("解密密码2");
         try {
             byte[] decryptedBytes = cipher.doFinal(encryptedBytes);
-            System.out.println("解密密码3");
+//            System.out.println("解密密码3");
             String result = new String(decryptedBytes, StandardCharsets.UTF_8);
-            System.out.println(result);
+//            System.out.println(result);
             return result;
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,8 +1,6 @@
 package com.example.assistant.dto;
 
-import lombok.Data;
 
-@Data
 public class RequestUserDto {
 
     private  String userId;
@@ -13,5 +11,37 @@ public class RequestUserDto {
     private String userBirth;
     private String userSex;
     private String userAvatar;
-    private String  userTheme;
+
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public String getUserArea() {
+        return userArea;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getUserAccount() {
+        return userAccount;
+    }
+
+    public String getUserPassWord() {
+        return userPassWord;
+    }
+
+    public String getUserBirth() {
+        return userBirth;
+    }
+
+    public String getUserSex() {
+        return userSex;
+    }
+
+    public String getUserAvatar() {
+        return userAvatar;
+    }
 }
