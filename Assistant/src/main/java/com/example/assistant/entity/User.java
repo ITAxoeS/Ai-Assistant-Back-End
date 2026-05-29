@@ -8,7 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 @Entity
 //@Data
-@Table(name = "user")
+@Table(name = "users")
 @DynamicUpdate
 //@NoArgsConstructor
 //@AllArgsConstructor

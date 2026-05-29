@@ -12,16 +12,21 @@ import org.hibernate.annotations.DynamicUpdate;
 @Table(name = "chat_list", uniqueConstraints = @UniqueConstraint(
         name = "uk_chat_list_user_id",
         columnNames = "user_id"  //避免总是返回多条
+),indexes = @Index(
+        name = "idx_chat_list_user_id",
+        columnList = "user_id"
 ))
 //@Table(name = "chat_storage",uniqueConstraints = @UniqueConstraint(columnNames = {"user_id","id"}))//不是歌曲收藏，不需要唯一约束
 @DynamicUpdate
 //@NoArgsConstructor
 //@AllArgsConstructor
 public class ChatList {
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+    //    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    @JsonIgnore
+//    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,23 +34,23 @@ public class ChatList {
 
     @Lob
     @Column(columnDefinition = "LONGTEXT")//保险起见，用大字符串
-    private  String chatList;//对话历史列表
+    private String chatList;//对话历史列表
 
     public ChatList() {
     }
 
-    public ChatList(User user, Long id, String chatList) {
-        this.user = user;
+    public ChatList(Long userId, Long id, String chatList) {
+        this.userId = userId;
         this.id = id;
         this.chatList = chatList;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getChatList() {

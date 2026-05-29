@@ -15,10 +15,13 @@ import org.hibernate.annotations.DynamicUpdate;
 //@NoArgsConstructor
 //@AllArgsConstructor
 public class ChatStorage {
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    @JsonIgnore
+//    private Long userId;
+@Column(name = "user_id", nullable = false)
+private Long userId;
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,20 +39,20 @@ public class ChatStorage {
     public ChatStorage() {
     }
 
-    public ChatStorage(User user, Long id, String createTime, String chatTitle,String message ) {
+    public ChatStorage(Long userId, Long id, String createTime, String chatTitle,String message ) {
         this.id = id;
-        this.user = user;
+        this.userId = userId;
         this.createTime = createTime;
         this.message = message;
         this.chatTitle = chatTitle;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getChatTitle() {

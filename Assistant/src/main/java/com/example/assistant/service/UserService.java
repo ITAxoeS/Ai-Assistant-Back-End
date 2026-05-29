@@ -78,7 +78,6 @@ public class UserService {
             User user = userOptional.get();//获取，代表当前账户的对象
             if (passwordEncoder.matches(passWord, user.getUserPassword())) {//如果密码相同
                 //封装数据
-                map.put("code", "200");
                 map.put("account", user.getUserAccount());
                 map.put("avatar", user.getUserAvatar());
                 map.put("name", user.getUserName());
@@ -109,14 +108,16 @@ public class UserService {
                 String token = new JwtTool().generateToken(user.getUserAccount(), user.getId());
                 map.put("token", token);
 //                System.out.println(map);
-                return map;
+            }else{
+                throw  new Exception("密码错误");
             }
+            return map;
+        }else {
+            throw  new Exception("用户不存在");
         }
-        map.put("code", "401");
-        return map;
     }
 
-    public Map<String, Object> updateUser(RequestUserDto requestUserDto, String account) {
+    public Map<String, Object> updateUser(RequestUserDto requestUserDto, String account)throws  Exception {
 //        String account = requestUserDto.getUserAccount();
         String avatar = requestUserDto.getUserAvatar();
         String name = requestUserDto.getUserName();
@@ -133,7 +134,6 @@ public class UserService {
             user.setUserArea(area);
             User resultUser = userRepository.save(user);
             Map<String, Object> map = new HashMap<>();
-            map.put("code", "200");
             map.put("avatar", resultUser.getUserAvatar());
             map.put("name", resultUser.getUserName());
             map.put("sex", resultUser.getUserSex());
@@ -143,9 +143,7 @@ public class UserService {
 //        System.out.println(ResponseData.success("登录成功", null, map));
             return map;
         } else {
-            Map<String, Object> map = new HashMap<>();
-            map.put("code", "404");
-            return map;
+           throw new Exception("更新用户失败");
         }
     }
 
@@ -155,7 +153,6 @@ public class UserService {
             User user = userOptional.get();//获取，代表当前账户的对象
             //封装数据
             Map<String, Object> map = new HashMap<>();
-            map.put("code", "200");
             map.put("account", user.getUserAccount());
             map.put("avatar", user.getUserAvatar());
             map.put("name", user.getUserName());
@@ -186,9 +183,7 @@ public class UserService {
             }
             return map;
         } else {
-            Map<String, Object> map = new HashMap<>();
-            map.put("code", "401");
-            return map;
+            throw new Exception("Token检查失败");
         }
     }
 

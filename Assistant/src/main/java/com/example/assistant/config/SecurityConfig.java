@@ -1,6 +1,7 @@
 package com.example.assistant.config;
 
 import com.example.assistant.tools.JwtAuthFilter;
+import org.springframework.boot.security.autoconfigure.web.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,9 +31,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // 禁用CSRF（简化）
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 无状态
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/").permitAll() // 公开接口
+                                .requestMatchers("/").permitAll() // 公开接口
 //                        .requestMatchers("/userApi/checkToken", "/userApi/cancelSong", "/userApi/collectSong", "/userApi/changeData").authenticated() // 需要有效Token
-                        .anyRequest().permitAll() // 允许所有请求
+                                .anyRequest().permitAll() // 允许所有请求
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

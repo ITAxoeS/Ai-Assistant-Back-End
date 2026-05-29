@@ -14,10 +14,12 @@ import org.hibernate.annotations.DynamicUpdate;
 //@NoArgsConstructor
 //@AllArgsConstructor
 public class UserData {
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    @JsonIgnore
-    private User user;
+    //    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    @JsonIgnore
+//    private User user;
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,20 +32,22 @@ public class UserData {
 
     private String monthRecord;
 
-    private  String toDoList;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String toDoList;
 
     public UserData() {
     }
 
     public UserData(
-            User user,
+            Long userId,
             Long id,
             String dayRecord,
             String weekRecord,
             String monthRecord,
             String toDoList
     ) {
-        this.user = user;
+        this.userId = userId;
         this.id = id;
         this.dayRecord = dayRecord;
         this.weekRecord = weekRecord;
@@ -51,24 +55,25 @@ public class UserData {
         this.toDoList = toDoList;
     }
 
-    public  UserData(User user, String dayRecord, String weekRecord, String monthRecord){
-        this.user = user;
+    public UserData( Long userId, String dayRecord, String weekRecord, String monthRecord) {
+        this.userId = userId;
         this.dayRecord = dayRecord;
         this.weekRecord = weekRecord;
         this.monthRecord = monthRecord;
         this.toDoList = "";
     }
-    public  UserData (User user,String toDoList){
-        this.user = user;
+
+    public UserData(Long userId, String toDoList) {
+        this.userId = userId;
         this.toDoList = toDoList;
     }
 
-    public User getUser() {
-        return user;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public Long getId() {

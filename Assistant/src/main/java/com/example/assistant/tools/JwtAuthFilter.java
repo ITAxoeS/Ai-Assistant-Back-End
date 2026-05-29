@@ -17,7 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -31,10 +33,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String token = extractToken(request);
 
         if (token != null && jwtTool.validateToken(token)) {
-            // 2. 验证创建认证信息
+            // 从 Token 里解析
             String account = jwtTool.getAccountFromToken(token);
+            Long userId = jwtTool.getUserIdFromToken(token); // ✅ 新增
+            // 构造“身份对象”
+            Map<String, Object> principal = new HashMap<>();
+            principal.put("userId", userId);
+            principal.put("account", account);
             Authentication auth = new UsernamePasswordAuthenticationToken(
-                    account, null, List.of(new SimpleGrantedAuthority("USER")) // 简单角色
+                    principal, null, List.of(new SimpleGrantedAuthority("USER")) // 简单角色
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
         }

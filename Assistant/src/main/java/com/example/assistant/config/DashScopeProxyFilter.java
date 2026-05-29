@@ -24,7 +24,7 @@ import java.util.zip.GZIPInputStream;
 public class DashScopeProxyFilter extends OncePerRequestFilter {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String API_KEY = "sk-98a9f297959740f7979e99954898a5e8";
+    private static final String API_KEY = "sk-79d8bc7b20ce4043ad2f230910efa538";
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {

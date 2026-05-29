@@ -48,7 +48,6 @@ public class UserController {
     public ResponseEntity loginUser(@Valid @RequestBody RequestUserDto requestUserDto) {
         try{
             Map<String ,Object> map = userService.loginUser(requestUserDto);
-            if (map.get("code").equals("200")){
                 String token = (String) map.get("token");
                 ResponseCookie cookie = ResponseCookie.from("auth_token", token)
                         .httpOnly(true)
@@ -59,8 +58,6 @@ public class UserController {
                         .build();
                map.remove("token");
                 return  ResponseEntity.ok().header("Set-Cookie",cookie.toString()).body(ResponseDto.success("注册成功",map));
-            }
-            return  ResponseEntity.status(401).body(ResponseDto.success("登录失败",map));
         }catch (Exception e){
             return ResponseEntity.status(500).body(ResponseDto.error("登录失败: " + e.getMessage()));
         }
@@ -71,11 +68,9 @@ public class UserController {
         try{
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated()) {
-                String account = auth.getName(); // 当前账户
-                Map<String, Object> map = userService.updateUser(requestUserDto, account);
-                if (map.get("code").equals("200")) {
+                Map<String, Object> principal = (Map<String, Object>) auth.getPrincipal();
+                Map<String, Object> map = userService.updateUser(requestUserDto, (String) principal.get("account"));
                     return ResponseEntity.ok().body(ResponseDto.success("修改成功", map));
-                }
             }
             return ResponseEntity.status(404).body(ResponseDto.error("修改失败"));
         }catch (Exception e){
@@ -88,12 +83,10 @@ public class UserController {
         try{
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if (auth != null && auth.isAuthenticated()) {
-                String account = auth.getName(); // 当前账户
-                System.out.println("账号："+account);
-                Map<String, Object> map = userService.checkUser(account);
-                if (map.get("code").equals("200")) {
+                Map<String, Object> principal = (Map<String, Object>) auth.getPrincipal();
+                System.out.println("账号："+(String) principal.get("account"));
+                Map<String, Object> map = userService.checkUser((String) principal.get("account"));
                     return ResponseEntity.ok().body(ResponseDto.success("登录成功", map));
-                }
             }
             return ResponseEntity.status(404).body(ResponseDto.error("验证失败"));
         }catch (Exception e){
